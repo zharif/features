@@ -1,0 +1,16 @@
+{
+    "name": "Bitwarden Secrets CLI (bws)",
+    "id": "bitwarden-secrets-cli",
+    "version": "1.0.0",
+    "description": "Installs the Bitwarden Secrets Manager CLI (bws) for managing secrets",
+    "options": {
+        "version": {
+            "type": "string",
+            "default": "latest",
+            "description": "Version of bws CLI to install (e.g., '1.0.0' or 'latest')"
+        }
+    },
+    "installsAfter": [
+        "ghcr.io/devcontainers/features/common-utils"
+    ]
+}

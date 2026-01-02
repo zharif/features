@@ -1,9 +1,9 @@
 {
-    "hello": {
+    "specific_version": {
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
-            "hello": {
-                "greeting": "hello"
+            "bitwarden-secrets-cli": {
+                "version": "1.0.0"
             }
         }
     }
