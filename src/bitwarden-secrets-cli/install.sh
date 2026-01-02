@@ -38,18 +38,44 @@ esac
 
 echo "Detected platform: $PLATFORM"
 
-# Install dependencies
-apt-get update
-apt-get install -y curl unzip ca-certificates
+# Install dependencies based on OS
+install_dependencies() {
+    if [ "$OS" = "linux" ]; then
+        if command -v apt-get > /dev/null 2>&1; then
+            apt-get update
+            apt-get install -y curl unzip ca-certificates
+        elif command -v apk > /dev/null 2>&1; then
+            apk add --no-cache curl unzip ca-certificates
+        elif command -v dnf > /dev/null 2>&1; then
+            dnf install -y curl unzip ca-certificates
+        elif command -v yum > /dev/null 2>&1; then
+            yum install -y curl unzip ca-certificates
+        else
+            echo "Warning: Package manager not detected. Assuming dependencies are installed."
+        fi
+    elif [ "$OS" = "darwin" ]; then
+        # macOS typically has curl built-in, unzip may need to be installed via brew
+        if ! command -v unzip > /dev/null 2>&1; then
+            if command -v brew > /dev/null 2>&1; then
+                brew install unzip
+            else
+                echo "Error: unzip is required but not installed. Please install it manually."
+                exit 1
+            fi
+        fi
+    fi
+}
+
+install_dependencies
 
 # Get the version to download
 if [ "$VERSION" = "latest" ]; then
     echo "Fetching latest bws version..."
     # Use GitHub API to get bws releases and find the latest bws-v* tag
-    VERSION=$(curl -fsSL "https://api.github.com/repos/bitwarden/sdk-sm/releases" | \
-        grep -o '"tag_name": *"bws-v[^"]*"' | \
-        head -1 | \
-        sed 's/.*"bws-v\([^"]*\)".*/\1/')
+    API_RESPONSE=$(curl -fsSL "https://api.github.com/repos/bitwarden/sdk-sm/releases" 2>/dev/null || echo "")
+    if [ -n "$API_RESPONSE" ]; then
+        VERSION=$(echo "$API_RESPONSE" | grep -o '"tag_name": *"bws-v[^"]*"' | head -1 | sed 's/.*"bws-v\([^"]*\)".*/\1/')
+    fi
     if [ -z "$VERSION" ]; then
         echo "Failed to fetch latest version, falling back to 1.0.0"
         VERSION="1.0.0"
@@ -74,8 +100,14 @@ mv bws /usr/local/bin/bws
 # Cleanup
 cd /
 rm -rf "$TEMP_DIR"
-apt-get clean
-rm -rf /var/lib/apt/lists/*
+
+# Cleanup package manager cache on Linux
+if [ "$OS" = "linux" ]; then
+    if command -v apt-get > /dev/null 2>&1; then
+        apt-get clean 2>/dev/null || true
+        rm -rf /var/lib/apt/lists/* 2>/dev/null || true
+    fi
+fi
 
 # Verify installation
 echo "Verifying installation..."
