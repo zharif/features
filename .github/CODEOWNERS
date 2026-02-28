@@ -1,0 +1,6 @@
+# CODEOWNERS - Define code ownership for automatic PR review requests
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# This CODEOWNERS file are currently managed by terraform in https://github.com/zharif/github-management-plane
+
+
+*    @zhrif
