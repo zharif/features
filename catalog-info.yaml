@@ -1,0 +1,20 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: features
+  description: Repository of dev container features published to GHCR
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: zharif/features
+  tags:
+    - devcontainer
+    - features
+    - platform
+  links:
+    - url: https://github.com/zharif/features
+      title: GitHub Repository
+      icon: github
+spec:
+  type: library
+  lifecycle: production
+  owner: group:default/homelab-admins
