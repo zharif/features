@@ -37,6 +37,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         with:
-          model: opencode/minimax-m2.5-free
+          model: ${{ vars.CI_AI_MODEL_NAME || 'opencode/minimax-m2.5-free' }}
           use_github_token: true
           share: false
