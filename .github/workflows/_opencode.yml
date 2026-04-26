@@ -36,6 +36,8 @@ jobs:
         uses: anomalyco/opencode/github@3c85719fea0ee83389c814d7abbf1f98c5c6f0f1  # v1.14.25
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          OPENROUTER_API_KEY: ${{ secrets.CI_AI_OPENROUTER_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.CI_AI_DEEPSEEK_API_KEY }}
         with:
           model: ${{ vars.CI_AI_MODEL_NAME || 'opencode/minimax-m2.5-free' }}
           use_github_token: true
