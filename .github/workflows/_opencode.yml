@@ -38,6 +38,8 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
           OPENROUTER_API_KEY: ${{ secrets.CI_AI_OPENROUTER_API_KEY }}
           DEEPSEEK_API_KEY: ${{ secrets.CI_AI_DEEPSEEK_API_KEY }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.CI_AI_LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.CI_AI_LANGFUSE_SECRET_KEY }}
         with:
           model: ${{ vars.CI_AI_MODEL_NAME || 'opencode/minimax-m2.5-free' }}
           use_github_token: true
