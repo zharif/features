@@ -14,6 +14,7 @@ jobs:
       startsWith(github.event.comment.body, '/oc') ||
       startsWith(github.event.comment.body, '/opencode')
     runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
+    environment: ${{ vars.OPENCODE_ENVIRONMENT }}
     permissions:
       contents: read
     steps:
@@ -33,10 +34,14 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Configure Git identity
-        run: |
-          git config user.email "${{ vars.CI_AI_GIT_USER_EMAIL }}"
-          git config user.name "${{ vars.CI_AI_GIT_USER_NAME }}"
         if: vars.CI_AI_GIT_USER_EMAIL != '' && vars.CI_AI_GIT_USER_NAME != ''
+        shell: bash
+        env:
+          CI_AI_GIT_USER_EMAIL: ${{ vars.CI_AI_GIT_USER_EMAIL }}
+          CI_AI_GIT_USER_NAME: ${{ vars.CI_AI_GIT_USER_NAME }}
+        run: |
+          git config user.email "$CI_AI_GIT_USER_EMAIL"
+          git config user.name "$CI_AI_GIT_USER_NAME"
 
       - name: Run OpenCode
         uses: anomalyco/opencode/github@acd8783a36d8642ade7038f34ca4f2f2ac3cc824  # v1.14.28
