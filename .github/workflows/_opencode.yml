@@ -1,4 +1,4 @@
-name: OpenCode Private Agent
+name: OpenCode Agent
 
 on:
   issue_comment:
@@ -12,47 +12,22 @@ jobs:
   opencode:
     if: |
       startsWith(github.event.comment.body, '/oc') ||
-      startsWith(github.event.comment.body, '/opencode')
-    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
-    environment: ${{ vars.OPENCODE_ENVIRONMENT }}
+      startsWith(github.event.comment.body, '/opencode') ||
+      startsWith(github.event.comment.body, '@zharif-ai-app')
+    name: Pull Request Review
+    uses: zharif/reusable-workflows/.github/workflows/reusable-opencode.yml@v2 # zizmor: ignore[unpinned-uses]
     permissions:
       contents: read
-    steps:
-      - name: Generate GitHub App Token
-        id: generate-token
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3  # v3.1.1
-        with:
-          client-id: ${{ vars.CI_AI_APP_CLIENT_ID }}
-          private-key: ${{ secrets.CI_AI_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-
-      - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-        with:
-          fetch-depth: 1
-          persist-credentials: true
-          token: ${{ steps.generate-token.outputs.token }}
-
-      - name: Configure Git identity
-        if: vars.CI_AI_GIT_USER_EMAIL != '' && vars.CI_AI_GIT_USER_NAME != ''
-        shell: bash
-        env:
-          CI_AI_GIT_USER_EMAIL: ${{ vars.CI_AI_GIT_USER_EMAIL }}
-          CI_AI_GIT_USER_NAME: ${{ vars.CI_AI_GIT_USER_NAME }}
-        run: |
-          git config user.email "$CI_AI_GIT_USER_EMAIL"
-          git config user.name "$CI_AI_GIT_USER_NAME"
-
-      - name: Run OpenCode
-        uses: anomalyco/opencode/github@acd8783a36d8642ade7038f34ca4f2f2ac3cc824  # v1.14.28
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-          OPENROUTER_API_KEY: ${{ secrets.CI_AI_OPENROUTER_API_KEY }}
-          DEEPSEEK_API_KEY: ${{ secrets.CI_AI_DEEPSEEK_API_KEY }}
-          OPENCODE_API_KEY: ${{ secrets.CI_AI_OPENCODE_API_KEY }}
-          LANGFUSE_PUBLIC_KEY: ${{ secrets.CI_AI_LANGFUSE_PUBLIC_KEY }}
-          LANGFUSE_SECRET_KEY: ${{ secrets.CI_AI_LANGFUSE_SECRET_KEY }}
-        with:
-          model: ${{ vars.CI_AI_MODEL_NAME || 'opencode/minimax-m2.5-free' }}
-          use_github_token: true
-          share: false
+    with:
+      client-id: ${{ vars.CI_AI_APP_CLIENT_ID }}
+      runner: ${{ vars.RUNNER || 'ubuntu-latest' }}
+      opencode-log-level: ${{ vars.CI_AI_OPENCODE_LOG_LEVEL || 'INFO' }}
+    secrets:
+      app-private-key: ${{ secrets.CI_AI_APP_PRIVATE_KEY }}
+      openrouter-api-key: ${{ secrets.CI_AI_OPENROUTER_API_KEY }}
+      deepseek-api-key: ${{ secrets.CI_AI_DEEPSEEK_API_KEY }}
+      opencode-api-key: ${{ secrets.CI_AI_OPENCODE_API_KEY }}
+      langfuse-public-key: ${{ secrets.CI_AI_LANGFUSE_PUBLIC_KEY }}
+      langfuse-secret-key: ${{ secrets.CI_AI_LANGFUSE_SECRET_KEY }}
+      ci-cache-access-key: ${{ secrets.CI_CACHE_ACCESS_KEY }}
+      ci-cache-secret-key: ${{ secrets.CI_CACHE_SECRET_KEY }}
