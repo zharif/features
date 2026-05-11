@@ -22,6 +22,7 @@ jobs:
       client-id: ${{ vars.CI_AI_APP_CLIENT_ID }}
       runner: ${{ vars.RUNNER || 'ubuntu-latest' }}
       opencode-log-level: ${{ vars.CI_AI_OPENCODE_LOG_LEVEL || 'INFO' }}
+      opencode-model: ${{ vars.CI_AI_MODEL_NAME }}
     secrets:
       app-private-key: ${{ secrets.CI_AI_APP_PRIVATE_KEY }}
       openrouter-api-key: ${{ secrets.CI_AI_OPENROUTER_API_KEY }}
