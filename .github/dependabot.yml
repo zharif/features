@@ -18,6 +18,8 @@
       "update-types":
       - "minor"
       - "patch"
+  "ignore":
+  - "dependency-name": "zharif/*"
   "labels":
   - "dependencies"
   - "github-actions"
